@@ -1,0 +1,25 @@
+@use './variables' as *;
+
+.navbar {
+  background-color: $primary-color;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500; // changed from 600 to 500 (less bold)
+    font-size: 1rem;  // increased font size for better readability
+    transition: opacity 0.2s ease;
+
+    &.active {
+      text-decoration: underline;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}

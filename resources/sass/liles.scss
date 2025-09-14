@@ -1,74 +1,227 @@
-$primary: #3498db;
-$dark: #121212;
+// ==================== VARIABLES ====================
+$primary: #667eea;
+$secondary: #764ba2;
+$accent: #4facfe;
+$accent-2: #00f2fe;
+$dark: #0a0a0a;
+$darker: #050505;
 $light: #ffffff;
 $text-dark: #222;
-$text-light: #f4f4f4;
-$transition: 0.3s ease;
+$text-light: #ffffff;
+$text-muted: #b4b4b4;
+$card-bg: rgba(255, 255, 255, 0.1);
+$transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+$bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// Gradients
+$primary-gradient: linear-gradient(135deg, $primary 0%, $secondary 100%);
+$secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+$accent-gradient: linear-gradient(135deg, $accent 0%, $accent-2 100%);
+$glow: 0 0 20px rgba($primary, 0.3);
+
+// ==================== MIXINS ====================
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin gradient-text($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// ==================== RESET & BASE ====================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: $light;
-  color: $text-dark;
-  transition: background $transition, color $transition;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: $dark;
+  color: $text-light;
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: $transition;
 
-  &.dark-mode {
-    background: $dark;
-    color: $text-light;
+  &.light-mode {
+    background: #f8f9fa;
+    color: #333;
 
     .navbar {
-      background: #1a1a1a;
-      .nav-links li a { color: $text-light; }
+      background: rgba(248, 249, 250, 0.95);
+      .nav-links li a { color: #333; }
     }
 
-    input, textarea {
-      background: #222;
-      color: white;
+    .hero::before {
+      background: 
+        radial-gradient(circle at 20% 30%, rgba($primary, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba($secondary, 0.2) 0%, transparent 50%);
+    }
+
+    .about { background: #e9ecef; }
+    .contact { background: #f8f9fa; }
+    .footer { background: #e9ecef; }
+
+    .feature-card,
+    .form-container,
+    .contact-method,
+    .social-link {
+      background: rgba(0, 0, 0, 0.05);
+      color: #333;
+    }
+
+    .form-control {
+      background: rgba(0, 0, 0, 0.05);
+      color: #333;
+      border-color: rgba(0, 0, 0, 0.1);
+      &::placeholder { color: #666; }
     }
   }
 }
 
-/* Navbar */
-.navbar {
-  background: $primary;
-  padding: 1rem 2rem;
-  position: sticky;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+// ==================== ANIMATED BACKGROUND ====================
+.bg-animation {
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+
+  .floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: $primary-gradient;
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+
+    &:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      width: 120px;
+      height: 120px;
+      top: 60%;
+      right: 20%;
+      animation-delay: 2s;
+      background: $secondary-gradient;
+    }
+
+    &:nth-child(3) {
+      width: 60px;
+      height: 60px;
+      bottom: 20%;
+      left: 30%;
+      animation-delay: 4s;
+      background: $accent-gradient;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(120deg); }
+  66% { transform: translateY(10px) rotate(240deg); }
+}
+
+// ==================== NAVIGATION ====================
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba($dark, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba($light, 0.1);
   z-index: 1000;
-  color: white;
+  transition: $transition;
 
   .navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1rem 2rem;
   }
 
   .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 800;
+    @include gradient-text($primary-gradient);
+    text-shadow: $glow;
+    cursor: pointer;
   }
 
   .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
     list-style: none;
+    align-items: center;
 
-    li a, li button {
-      background: none;
-      border: none;
-      font-size: 1rem;
-      color: white;
-      cursor: pointer;
+    li a {
+      color: $text-light;
       text-decoration: none;
-      transition: color $transition;
+      position: relative;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      transition: $transition;
 
       &:hover {
-        color: #e0e0e0;
+        background: rgba($light, 0.1);
+        transform: translateY(-2px);
       }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: $primary-gradient;
+        transition: $transition;
+        transform: translateX(-50%);
+      }
+
+      &:hover::after {
+        width: 80%;
+      }
+    }
+  }
+
+  .dark-toggle {
+    background: $card-bg;
+    border: none;
+    color: $text-light;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: $transition;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: $glow;
     }
   }
 
@@ -80,135 +233,494 @@ body {
     span {
       width: 25px;
       height: 3px;
-      background: white;
+      background: $light;
       margin: 4px;
-      transition: all $transition;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .nav-links {
-      display: none;
-      flex-direction: column;
-      background: $primary;
-      position: absolute;
-      top: 60px;
-      right: 0;
-      width: 200px;
-      padding: 1rem;
+      transition: $transition;
     }
 
-    .nav-links.nav-active {
-      display: flex;
-    }
-
-    .hamburger {
-      display: flex;
-    }
-
-    .hamburger.toggle span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-
-    .hamburger.toggle span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .hamburger.toggle span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
+    &.toggle {
+      span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      span:nth-child(2) {
+        opacity: 0;
+      }
+      span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
     }
   }
 }
 
-/* Hero Section */
+// ==================== HERO SECTION ====================
 .hero {
-  padding: 5rem 2rem;
-  background: linear-gradient(135deg, #74ebd5, #acb6e5);
-  color: white;
+  height: 100vh;
+  @include flex-center;
   text-align: center;
-
-  h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  padding-top: 120px; /* Add padding to prevent overlap with navbar */
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba($primary, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba($secondary, 0.3) 0%, transparent 50%);
+    z-index: -1; /* Ensure it's behind the content */
   }
 
-  .btn {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    background: white;
-    color: $primary;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: all $transition;
+  /* Style for the heading (Welcome to the Home Page) */
+  h1 {
+    font-size: clamp(3rem, 8vw, 8rem); /* Adjust font size for responsiveness */
+    font-weight: 900;
+    margin-bottom: 1rem;
+    @include gradient-text(linear-gradient(135deg, $light 0%, $primary 50%, $secondary 100%));
+    text-shadow: 0 0 30px rgba($light, 0.5);
+    color: white; /* Make sure the text is white and visible */
+    z-index: 2; /* Ensure the heading text is above other elements */
+  }
+
+  /* Style for the paragraph */
+  p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: $text-muted;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: $text-muted;
+    animation: bounce 2s infinite;
+    font-size: 1.5rem;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+  40% { transform: translateX(-50%) translateY(-10px); }
+  60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+
+// ==================== BUTTONS ====================
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: $transition;
+
+  &-primary {
+    background: $primary-gradient;
+    color: $light;
+    box-shadow: 0 10px 30px rgba($primary, 0.4);
 
     &:hover {
-      background: $primary;
-      color: white;
-      transform: scale(1.05);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 40px rgba($primary, 0.6);
+      animation: pulse 1s infinite;
+    }
+  }
+
+  &-secondary {
+    background: transparent;
+    color: $text-light;
+    border: 2px solid rgba($light, 0.3);
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba($light, 0.1);
+      border-color: rgba($light, 0.6);
+      transform: translateY(-3px) scale(1.05);
+      animation: pulse 1s infinite;
     }
   }
 }
 
-/* About Section */
-.about {
-  background: #f9f9f9;
-  padding: 4rem 2rem;
+@keyframes pulse {
+  0% { transform: scale(1.05); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1.05); }
+}
+
+// ==================== SECTIONS ====================
+.section-title {
+  text-align: center;
+  margin-bottom: 4rem;
 
   h2 {
-    font-size: 2rem;
+    font-size: 3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
+    @include gradient-text($primary-gradient);
   }
 
   p {
-    max-width: 700px;
-    margin: auto;
+    font-size: 1.2rem;
+    color: $text-muted;
+    max-width: 600px;
+    margin: 0 auto;
   }
 }
 
-/* Contact Section */
-.contact {
-  padding: 4rem 2rem;
+// ==================== ABOUT SECTION ====================
+.about {
+  padding: 8rem 0;
+  background: $darker;
+  position: relative;
 
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: $primary-gradient;
   }
 
-  form {
-    max-width: 500px;
-    margin: auto;
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .feature-card {
+    background: $card-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($light, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    transition: $transition;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: $primary-gradient;
+      transform: scaleX(0);
+      transition: $transition;
+    }
+
+    &:hover {
+      transform: translateY(-10px) rotate(2deg);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      &::before { transform: scaleX(1); }
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      background: $primary-gradient;
+      border-radius: 50%;
+      @include flex-center;
+      font-size: 2rem;
+      color: $light;
+      transition: $transition;
+
+      &:hover {
+        transform: rotate(360deg);
+      }
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: $text-light;
+    }
+
+    p {
+      color: $text-muted;
+      line-height: 1.6;
+    }
+  }
+}
+
+// ==================== STATS SECTION ====================
+.stats-section {
+  padding: 6rem 0;
+  background: $dark;
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 2rem;
+    background: $card-bg;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($light, 0.1);
+    transition: $transition;
+
+    &:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      @include gradient-text($primary-gradient);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: $text-muted;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// ==================== CONTACT SECTION ====================
+.contact {
+  padding: 8rem 0;
+  background: $dark;
+
+  .contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .contact-info {
+    h3 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: $text-light;
+    }
+
+    p {
+      color: $text-muted;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+  }
+
+  .contact-methods {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 
-    input, textarea {
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      transition: border-color $transition;
-
-      &:focus {
-        border-color: $primary;
-        outline: none;
-      }
-    }
-
-    button {
-      background: $primary;
-      color: white;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background $transition;
+    .contact-method {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: $card-bg;
+      border-radius: 15px;
+      transition: $transition;
 
       &:hover {
-        background: darken($primary, 10%);
+        transform: translateX(10px) scale(1.02);
+        background: rgba($light, 0.15);
+      }
+
+      i {
+        font-size: 1.5rem;
+        color: $primary;
+        width: 30px;
+        text-align: center;
+        transition: $transition;
+      }
+
+      &:hover i {
+        color: $accent;
+        transform: rotate(15deg);
       }
     }
   }
+
+  .form-container {
+    background: $card-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($light, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: $text-light;
+      font-weight: 500;
+    }
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 1rem;
+    background: rgba($light, 0.05);
+    border: 1px solid rgba($light, 0.2);
+    border-radius: 10px;
+    color: $text-light;
+    font-size: 1rem;
+    transition: $transition;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba($primary, 0.2);
+      background: rgba($light, 0.08);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: $primary-gradient;
+    border: none;
+    border-radius: 10px;
+    color: $light;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba($primary, 0.4);
+      animation: pulse 1s infinite;
+    }
+  }
+}
+
+// ==================== FOOTER ====================
+.footer {
+  background: $darker;
+  padding: 3rem 0;
+  text-align: center;
+  border-top: 1px solid rgba($light, 0.1);
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .social-link {
+    width: 50px;
+    height: 50px;
+    background: $card-bg;
+    border-radius: 50%;
+    @include flex-center;
+    color: $text-light;
+    text-decoration: none;
+    transition: $transition;
+    font-size: 1.2rem;
+
+    &:hover {
+      transform: translateY(-5px) scale(1.1) rotate(360deg);
+      background: $primary-gradient;
+    }
+  }
+}
+
+// ==================== MOBILE RESPONSIVE ====================
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 1rem;
+  }
+  
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background: rgba($dark, 0.95);
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 250px;
+    padding: 2rem;
+    border-radius: 0 0 0 20px;
+
+    &.nav-active {
+      display: flex;
+    }
+  }
+
+  .hamburger {
+    display: flex;
+  }
+  
+  .hero h1 {
+    font-size: 3rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+    .btn { width: 80%; justify-content: center; }
+  }
+  
+  .contact-content { grid-template-columns: 1fr; }
+  .features-grid, .stats-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 1rem; }
+}
+
+// ==================== CUSTOM SCROLLBAR ====================
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $dark;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $primary-gradient;
+  border-radius: 10px;
 }

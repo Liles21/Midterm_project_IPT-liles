@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('liles');
-});
+// If you have other Laravel routes, keep them above this!
+
+Route::get('/{any}', function () {
+    return view('welcome');  // <-- Your blade file here
+})->where('any', '.*');
